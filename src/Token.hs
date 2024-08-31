@@ -1,3 +1,7 @@
+module Token (
+    Token(..)
+) where
+
 data Token
     = TokInt Int                -- Integer literals 42
     | TokString String          -- String literals "hello"
@@ -6,7 +10,6 @@ data Token
     | TokOp String              -- Operators like "+", "-", "*", "/", "&&", "||"
     | TokLParen | TokRParen    -- Parentheses
     | TokLBrace | TokRBrace    -- Braces
-    | TokSpace
     | TokNewline
     | TokEOF
     deriving (Show, Eq)
