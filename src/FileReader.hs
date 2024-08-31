@@ -1,10 +1,20 @@
+module FileReader (
+    getFileName,
+    FileReader.readFile
+) where
+
 import System.IO
-import Control.Monad
+
+getFileName :: IO FilePath
+getFileName = do
+    putStrLn "Enter the file name: "
+    fileName <- getLine
+    return fileName
 
 readFile :: FilePath -> IO String
 readFile filePath = do
     handle <- openFile filePath ReadMode
     contents <- hGetContents handle
-    print contents 
-    hClose handle
+    -- No need to close as hGetContents does it for us
+    return contents
         

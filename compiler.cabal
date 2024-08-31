@@ -25,7 +25,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      FileReader
   other-modules:
       Paths_compiler
   autogen-modules:

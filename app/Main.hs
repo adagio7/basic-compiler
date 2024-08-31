@@ -1,6 +1,9 @@
 module Main (main) where
 
-import Lib
+import FileReader
 
 main :: IO ()
-main = someFunc
+main = do
+    fileName <- getFileName
+    contents <- FileReader.readFile fileName
+    print contents
