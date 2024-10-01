@@ -1,2 +1,3 @@
-main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+-- Config to discover all other test in the test folder
+{-# OPTIONS_GHC -F -pgmF hspec-discover #-}
+
