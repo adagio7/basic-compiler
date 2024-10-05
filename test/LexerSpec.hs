@@ -121,3 +121,7 @@ spec = do
 	it "should lex multiple tokens" $ do
 	    let result = parse (some lexme) "fakeFile" "123 \"hello\" if"
 	    result `shouldBe` Right [TokInt 123, TokString "hello", TokKeyword "if"]
+
+	it "should lex multiple tokens with no space" $ do
+	    let result = parse (some lexme) "fakeFile" "if(123)"
+	    result `shouldBe` Right [TokKeyword "if", TokLParen, TokInt 123, TokRParen]
