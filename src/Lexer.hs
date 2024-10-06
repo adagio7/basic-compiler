@@ -4,6 +4,7 @@ module Lexer (
     lexme
 ) where
 
+-- Resolve conflicting imports
 import Text.Megaparsec hiding (Token)
 import Text.Megaparsec.Char (char, space1, string, alphaNumChar)
 
