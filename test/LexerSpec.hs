@@ -12,11 +12,11 @@ import Token
 
 spec :: Spec
 spec = do
-    describe "Lexer Single Token" $ do
+    describe "Lexer Base Data Types" $ do
         it "should lex integers" $ do
 	    let result = parse lexme "fakeFile" "123"
             result `shouldBe` Right (TokInt 123)
-	
+
 	it "should lex char" $ do
 	    let result = parse lexme "fakeFile" "\"a\""
 	    result `shouldBe` Right (TokString "a")
@@ -25,6 +25,19 @@ spec = do
 	    let result = parse lexme "fakeFile" "\"hello\""
 	    result `shouldBe` Right (TokString "hello")
 
+	it "should lex null" $ do
+	    let result = parse lexme "fakeFile" "null"
+	    result `shouldBe` Right TokNull
+
+	it "should lex True" $ do
+	    let result = parse lexme "fakeFile" "True"
+	    result `shouldBe` Right (TokBool True)
+
+	it "should lex False" $ do
+	    let result = parse lexme "fakeFile" "False"
+	    result `shouldBe` Right (TokBool False)
+
+    describe "Lexer brackets" $ do
 	it "should lex left parentheses" $ do
 	    let result = parse lexme "fakeFile" "("
 	    result `shouldBe` Right TokLParen
@@ -32,6 +45,14 @@ spec = do
 	it "should lex right parentheses" $ do
 	    let result = parse lexme "fakeFile" ")"
 	    result `shouldBe` Right TokRParen
+
+	it "should lex left bracket" $ do
+	    let result = parse lexme "fakeFile" "["
+	    result `shouldBe` Right TokLBrack
+
+	it "should lex right bracket" $ do
+	    let result = parse lexme "fakeFile" "]"
+	    result `shouldBe` Right TokRBrack
 
 	it "should lex left braces" $ do
 	    let result = parse lexme "fakeFile" "{"
@@ -41,6 +62,7 @@ spec = do
 	    let result = parse lexme "fakeFile" "}"
 	    result `shouldBe` Right TokRBrace
 
+    describe "Lexer Keywords" $ do
 	it "should lex if" $ do
 	    let result = parse lexme "fakeFile" "if"
 	    result `shouldBe` Right (TokKeyword "if")
@@ -57,6 +79,7 @@ spec = do
 	    let result = parse lexme "fakeFile" "func"
 	    result `shouldBe` Right (TokKeyword "func")
 
+    describe "Lexer Operators" $ do
 	it "should lex +" $ do
 	    let result = parse lexme "fakeFile" "+"
 	    result `shouldBe` Right (TokOp "+")
@@ -109,6 +132,15 @@ spec = do
 	    let result = parse lexme "fakeFile" "="
 	    result `shouldBe` Right (TokOp "=")
 	
+    describe "Lexer comments" $ do
+	it "should lex single line comments" $ do
+	    let result = parse lexme "fakeFile" "// This is a comment\n123"
+	    result `shouldBe` Right (TokInt 123)
+
+	it "should lex block comments" $ do
+	    let result = parse lexme "fakeFile" "/* This is a comment */123"
+	    result `shouldBe` Right (TokInt 123)
+
     describe "Lexer Multiple Tokens" $ do
 	it "should lex multiple ints" $ do
 	    let result = parse (some lexme) "fakeFile" "123 456 789"
