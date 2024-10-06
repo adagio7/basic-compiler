@@ -39,10 +39,17 @@ pBool = choice
     ]
 
 pInt :: Parser Token
-pInt = TokInt <$> L.signed sc L.decimal
+pInt = do
+    num <- L.signed sc L.decimal
+    notFollowedBy (char '.' <|> alphaNumChar)
+    return $ TokInt num
 
 pFloat :: Parser Token
-pFloat = TokFloat <$> L.signed sc L.float
+pFloat = do
+    num <- L.signed sc L.float
+    -- No more remaining digits or decimal points
+    notFollowedBy (char '.' <|> alphaNumChar)
+    return $ TokFloat num
 
 pString :: Parser Token 
 pString = do
@@ -85,22 +92,19 @@ pRBrace = char '}' *> sc *> return TokRBrace
 
 pToken :: Parser Token
 pToken = choice
+    -- The ordering of this matters, as it's greedily matched
     [
-        -- The ordering of this matters, as the first one that matches will be returned
         try pKeyword        -- Placed before pString, as keyword can be parsed as string
-        , try pNull
+        , try pNull         -- Placed before pString, same as above
         , try pBool
-        , try pFloat        -- Placed before pInt, as float can be parsed as int
         , try pInt
+        , try pFloat
         , try pIdent        -- Placed after pInt, as int can be parsed as ident
         , try pString
         , try pOp
-        , try pLParen
-        , try pRParen
-        , try pLBrack
-        , try pRBrack
-        , try pLBrace
-        , try pRBrace
+        , try pLParen, try pRParen
+        , try pLBrack, try pRBrack
+        , try pLBrace, try pRBrace
     ]
 
 lexme :: Parser Token

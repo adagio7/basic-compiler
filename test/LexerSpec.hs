@@ -6,6 +6,7 @@ module LexerSpec (
 import Text.Megaparsec hiding (Token)
 
 import Test.Hspec
+import Data.Either (isLeft)
 
 import Lexer
 import Token
@@ -194,3 +195,24 @@ spec = do
 	it "should lex multiple tokens with no space" $ do
 	    let result = parse (some lexme) "fakeFile" "if(123)"
 	    result `shouldBe` Right [TokKeyword "if", TokLParen, TokInt 123, TokRParen]
+
+    describe "Lexer Errors" $ do
+	-- it "should fail on invalid int" $ do
+	--     let result = parse lexme "fakeFile" "123a"
+	--     result `shouldSatisfy` isLeft
+	--
+	it "should fail on invalid float" $ do
+	    let result = parse lexme "fakeFile" "3.14.15"
+	    result `shouldSatisfy` isLeft
+
+	it "should fail on invalid string" $ do
+	    let result = parse lexme "fakeFile" "\"hello"
+	    result `shouldSatisfy` isLeft
+
+	it "should fail on unclosed string" $ do
+	    let result = parse lexme "fakeFile" "\"hello"
+	    result `shouldSatisfy` isLeft
+
+	it "should fail on unclosed block comments" $ do
+	    let result = parse lexme "fakeFile" "/* This is a comment"
+	    result `shouldSatisfy` isLeft
