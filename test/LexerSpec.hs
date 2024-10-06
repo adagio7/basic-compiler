@@ -82,6 +82,23 @@ spec = do
 	    let result = parse lexme "fakeFile" "}"
 	    result `shouldBe` Right TokRBrace
 
+    describe "Lexer Identifiers" $ do
+	it "should lex single letter identifiers" $ do
+	    let result = parse lexme "fakeFile" "x"
+	    result `shouldBe` Right (TokIdent "x")
+
+	it "should lex multiple letter identifiers" $ do
+	    let result = parse lexme "fakeFile" "hello"
+	    result `shouldBe` Right (TokIdent "hello")
+
+	it "should lex identifiers with numbers" $ do
+	    let result = parse lexme "fakeFile" "x123"
+	    result `shouldBe` Right (TokIdent "x123")
+
+	it "should lex identifiers with underscores" $ do
+	    let result = parse lexme "fakeFile" "x_y_z"
+	    result `shouldBe` Right (TokIdent "x_y_z")
+
     describe "Lexer Keywords" $ do
 	it "should lex if" $ do
 	    let result = parse lexme "fakeFile" "if"

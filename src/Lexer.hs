@@ -6,7 +6,7 @@ module Lexer (
 
 -- Resolve conflicting imports
 import Text.Megaparsec hiding (Token)
-import Text.Megaparsec.Char (char, space1, string, alphaNumChar)
+import Text.Megaparsec.Char (char, space1, string, alphaNumChar, letterChar)
 
 import Data.Void (Void)
 import Data.Functor (($>))
@@ -57,6 +57,14 @@ pOp :: Parser Token
 pOp = TokOp <$> choice (map (try . string) 
     ["&&", "||", "==", "!=", "<=", ">=", "<", ">", "+", "-", "*", "/", "="])
 
+-- Identifier should not start with a number, can contain alphanum or underscores
+pIdent :: Parser Token
+pIdent = do
+    firstChar <- letterChar <|> char '_'
+    rest <- many (alphaNumChar <|> char '_')
+    let ident = firstChar : rest
+    return $ TokIdent ident
+
 pLParen :: Parser Token
 pLParen = char '(' *> sc *> return TokLParen
 
@@ -79,12 +87,13 @@ pToken :: Parser Token
 pToken = choice
     [
         -- The ordering of this matters, as the first one that matches will be returned
-        try pKeyword
+        try pKeyword        -- Placed before pString, as keyword can be parsed as string
         , try pNull
         , try pBool
-        , try pString
-        , try pFloat
+        , try pFloat        -- Placed before pInt, as float can be parsed as int
         , try pInt
+        , try pIdent        -- Placed after pInt, as int can be parsed as ident
+        , try pString
         , try pOp
         , try pLParen
         , try pRParen
