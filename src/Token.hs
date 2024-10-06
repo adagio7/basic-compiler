@@ -10,4 +10,4 @@ data Token
     | TokOp String              -- Operators like "+", "-", "*", "/", "&&", "||"
     | TokLParen | TokRParen    -- Parentheses
     | TokLBrace | TokRBrace    -- Braces
-    deriving (Show, Eq)
+    deriving (Show, Eq, Ord)
