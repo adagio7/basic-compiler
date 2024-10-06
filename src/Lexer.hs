@@ -82,9 +82,9 @@ pToken = choice
         try pKeyword
         , try pNull
         , try pBool
-        , try pInt
-        , try pFloat
         , try pString
+        , try pFloat
+        , try pInt
         , try pOp
         , try pLParen
         , try pRParen

@@ -17,6 +17,10 @@ spec = do
 	    let result = parse lexme "fakeFile" "123"
             result `shouldBe` Right (TokInt 123)
 
+	it "should lex negative integers" $ do
+	    let result = parse lexme "fakeFile" "-123"
+	    result `shouldBe` Right (TokInt (-123))
+
 	it "should lex char" $ do
 	    let result = parse lexme "fakeFile" "\"a\""
 	    result `shouldBe` Right (TokString "a")
@@ -36,6 +40,22 @@ spec = do
 	it "should lex False" $ do
 	    let result = parse lexme "fakeFile" "False"
 	    result `shouldBe` Right (TokBool False)
+
+	it "should lex float" $ do
+	    let result = parse lexme "fakeFile" "3.14"
+	    result `shouldBe` Right (TokFloat 3.14)
+
+	it "should lex float with 0 decimal" $ do
+	    let result = parse lexme "fakeFile" "3.0"
+	    result `shouldBe` Right (TokFloat 3.0)
+
+	it "should lex float with 0 integer" $ do
+	    let result = parse lexme "fakeFile" "0.14"
+	    result `shouldBe` Right (TokFloat 0.14)
+
+	it "should lex float with negative" $ do
+	    let result = parse lexme "fakeFile" "-3.14"
+	    result `shouldBe` Right (TokFloat (-3.14))
 
     describe "Lexer brackets" $ do
 	it "should lex left parentheses" $ do
