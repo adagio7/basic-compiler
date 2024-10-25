@@ -31,6 +31,15 @@ pKeyword = do
 pNull :: Parser Token
 pNull = string "null" $> TokNull
 
+pComma :: Parser Token
+pComma = char ',' *> sc *> return TokComma
+
+pColon :: Parser Token
+pColon = char ':' *> sc *> return TokColon
+
+pDot :: Parser Token
+pDot = char '.' *> sc *> return TokDot
+
 pBool :: Parser Token
 pBool = choice
     [
@@ -96,6 +105,9 @@ pToken = choice
     [
         try pKeyword        -- Placed before pString, as keyword can be parsed as string
         , try pNull         -- Placed before pString, same as above
+        , try pComma
+        , try pColon
+        , try pDot
         , try pBool
         , try pInt
         , try pFloat
