@@ -1,18 +1,27 @@
 module AST (
     Expr(..),
+    Type(..),
     UOp(..),
     BOp(..)
 ) where
 
 data Expr = 
-    Var String
+    Ident String
     | StringLit String
-    | Num Int
+    | Boolean Bool
+    | Null ()
+    | IntLit Int
+    | FloatLit Float
     | BinOp BOp Expr Expr
     | UnOp UOp Expr 
     | If Expr Expr Expr
-    | Let String Expr
-    | Fun String Expr
+    | Let Expr Expr
+    | Fun Expr [(Expr, Type)] Expr  -- Function Name, Arguments, Body
+    deriving (Show, Eq)
+
+-- Base Data Types
+data Type =
+    TInt | TFloat | TBool | TString | TNull
     deriving (Show, Eq)
 
 -- Unary Operators
