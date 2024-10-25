@@ -11,7 +11,10 @@ data Token
     | TokKeyword String         -- Keywords like "if", "else", "while"
     | TokIdent String           -- Identifiers like "x", "y", "z"
     | TokOp String              -- Operators like "+", "-", "*", "/", "&&", "||"
+    | TokComma
+    | TokColon
+    | TokDot
     | TokLParen | TokRParen    -- Parentheses
-    | TokLBrack | TokRBrack    -- Brackets
+    | TokLBrack | TokRBrack    -- Bracket
     | TokLBrace | TokRBrace    -- Braces
     deriving (Show, Eq, Ord)
