@@ -37,7 +37,6 @@ jobs:
         key: ${{ runner.os }}-stack-work-${{ hashFiles('stack.yaml') }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('**/*.hs') }}
         restore-keys: |
           ${{ runner.os }}-stack-work-
->>>>>>> ff9bbd6 (Revert ci artifact)
 
     - name: Install dependencies
       run: stack setup
