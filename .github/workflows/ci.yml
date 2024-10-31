@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Setup GHC with stack
-      uses: actions/setup-haskell@v1.1
+      uses: haskell-actions/setup@v2
       with:
-        enable-stack: true
         ghc-version: 8.10.4
+        enable-stack: true
         stack-version: 2.5.1
 
     - name: Install dependencies
