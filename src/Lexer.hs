@@ -25,7 +25,7 @@ sc = L.space space1 lineComment blockComment
 
 pKeyword :: Parser Token
 pKeyword = do
-    kw <- choice (map string ["if", "else", "while", "func"]) <* notFollowedBy alphaNumChar
+    kw <- choice (map string ["if", "else", "while", "func", "return", "->"]) <* notFollowedBy alphaNumChar
     return $ TokKeyword kw
 
 pNull :: Parser Token

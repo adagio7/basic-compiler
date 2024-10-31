@@ -131,6 +131,14 @@ spec = do
 	    let result = parse lexme fileName "func"
 	    result `shouldBe` Right (TokKeyword "func")
 
+	it "should lex return" $ do
+	    let result = parse lexme fileName "return"
+	    result `shouldBe` Right (TokKeyword "return")
+
+	it "should lex ->" $ do
+	    let result = parse lexme fileName "->"
+	    result `shouldBe` Right (TokKeyword "->")
+
     describe "Lexer Operators" $ do
 	it "should lex +" $ do
 	    let result = parse lexme fileName "+"
@@ -221,6 +229,10 @@ spec = do
 	it "should lex function calls" $ do
 	    let result = parse (some lexme) fileName "func(1, 2, 3)"
 	    result `shouldBe` Right [TokKeyword "func", TokLParen, TokInt 1, TokComma, TokInt 2, TokComma, TokInt 3, TokRParen]
+
+	it "should lex function with return type" $ do
+	    let result = parse (some lexme) fileName "func() -> int"
+	    result `shouldBe` Right [TokKeyword "func", TokLParen, TokRParen, TokKeyword "->", TokIdent "int"]
 
     describe "Lexer Errors" $ do
 	it "should fail on invalid int" $ do
