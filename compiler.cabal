@@ -30,6 +30,7 @@ library
       Lexer
       Parser
       Token
+      TypeChecker
   other-modules:
       Paths_compiler
   autogen-modules:
@@ -71,6 +72,7 @@ test-suite compiler-test
   other-modules:
       LexerSpec
       ParserSpec
+      TypeCheckerSpec
       Paths_compiler
   autogen-modules:
       Paths_compiler
