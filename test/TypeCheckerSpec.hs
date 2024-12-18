@@ -107,6 +107,23 @@ spec = do
 		let result = inferType typeEnv (BinOp Geq (IntLit 1) (IntLit 2))
 		result `shouldBe` Right TBool
 
+    describe "should type check if statements" $ do
+	it "should type check if statement with matching branches" $ do
+	    let result = inferType typeEnv (If (Boolean True) (IntLit 123) (IntLit 456))
+	    result `shouldBe` Right TNull
+
+	it "should type check if statement with no return" $ do
+	    let result = inferType typeEnv (If (Boolean True) (Null) (Null))
+	    result `shouldBe` Right TNull
+
+	it "should pass on mismatched branches" $ do
+	    let result = inferType typeEnv (If (Boolean True) (IntLit 123) (FloatLit 3.14))
+	    result `shouldBe` Right TNull
+
+	it "should fail on none boolean condition" $ do
+	    let result = inferType typeEnv (If (IntLit 123) (IntLit 123) (IntLit 456))
+	    result `shouldBe` Left "Condition in if statement must be boolean"
+
     describe "should type check function" $ do
 	-- Note: Functions shouldn't add to type envrionment, as they create a new scope
 	it "should type check function with no arguments" $ do

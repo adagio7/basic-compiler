@@ -53,18 +53,16 @@ inferType env expr = case expr of
             Geq -> checkComparisonOp ">=" t1 t2
 
     -- TODO: If condition
-    -- A problem with this is that sometimes the if should return a value, sometimes it should not
-    -- If cond e1 e2 -> do
-    --     t1 <- inferType env e1
-    --     t2 <- inferType env e2
-    --     tcond <- inferType env cond
-    --     if tcond == TBool then
-    --         if t1 == t2 then
-    --             Right t1
-    --         else
-    --             Left "Type mismatch in if-else branches"
-    --     else
-    --         Left "Condition in if statement must be boolean"
+    If cond e1 e2 -> do
+        -- Note that we don't check the type of the branches, just that they are defined
+        tcond <- inferType env cond
+        if tcond == TBool then do
+            -- Ensure that branches are defined
+            _ <- inferType env e1
+            _ <- inferType env e2
+            Right TNull
+        else
+            Left "Condition in if statement must be boolean"
 
     Fun (Ident name) args retType body -> do
         -- Insert the params to new env
