@@ -35,6 +35,26 @@ spec = do
 	    let result = inferType typeEnv Null
 	    result `shouldBe` Right TNull
 
+    describe "should type check variables" $ do
+	it "should type check existing variables" $ do
+	    let typeEnv = Map.fromList [("x", TInt), ("y", TFloat)]
+	    let result = inferType typeEnv (Ident "x")
+	    result `shouldBe` Right TInt
+
+	it "should type check undefined variables" $ do
+	    let result = inferType typeEnv (Ident "x")
+	    result `shouldBe` Left "Undefined variable: x"
+
+    describe "should type check unary operators" $ do
+	describe "should type check negation" $ do
+	    it "should type check negation of integer" $ do
+		let result = inferType typeEnv (UnOp Neg (IntLit 123))
+		result `shouldBe` Right TInt
+
+	    it "should type check negation of boolean" $ do
+		let result = inferType typeEnv (UnOp Not (Boolean True))
+		result `shouldBe` Right TBool
+
     describe "should type check binary operators" $ do
 	describe "should type check numerical operations" $ do
 	    it "should type check addition" $ do
@@ -109,7 +129,13 @@ spec = do
 	    checkEnvEquality typeEnv expTypeEnv `shouldBe` True
 
 
-	-- it "should type check function with return type" $ do
+	it "should type check function with existing variables" $ do
+	    let typeEnv = Map.fromList [("x", TInt), ("y", TFloat)]
+	    let expTypeEnv = Map.fromList [("x", TInt), ("y", TFloat)]
+	    let result = inferType typeEnv (Fun (Ident "foo") [(Ident "x", TInt), (Ident "y", TFloat)] TFloat (Return (FloatLit 123)))
+
+	    result `shouldBe` Right TFloat
+	    checkEnvEquality typeEnv expTypeEnv `shouldBe` True
 
 
 checkEnvEquality :: TypeEnv -> TypeEnv -> Bool

@@ -18,6 +18,18 @@ inferType env expr = case expr of
         Just t -> Right t
         Nothing -> Left $ "Undefined variable: " ++ str
 
+    UnOp op e -> do
+        t <- inferType env e
+
+        case op of
+            Not | t == TBool -> Right TBool
+                | otherwise  -> Left "Type mismatch in unary operation !: expected TBool"
+
+            Neg | t == TInt || t == TFloat -> Right t
+                | otherwise -> Left "Type mismatch in unary operation -: expected TInt or TFloat"
+
+            _ -> Left $ "Unknown unary operator: " ++ show op
+
     BinOp op e1 e2 -> do
         t1 <- inferType env e1
         t2 <- inferType env e2
@@ -29,7 +41,6 @@ inferType env expr = case expr of
             Div -> checkNumericOp "/" t1 t2
             
             -- Logical Operations
-            -- Not -> checkBoolOp "!" t1 True -- TODO: kinda hacky, change this?
             And -> checkBoolOp "&&" t1 t2
             Or -> checkBoolOp "||" t1 t2
 
