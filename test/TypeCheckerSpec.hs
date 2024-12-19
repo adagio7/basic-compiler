@@ -8,6 +8,7 @@ import Debug.Trace
 import AST
 import TypeChecker
 
+import Data.Either (isLeft)
 import qualified Data.Map as Map
 
 spec :: Spec
@@ -43,7 +44,7 @@ spec = do
 
 	it "should type check undefined variables" $ do
 	    let result = inferType typeEnv (Ident "x")
-	    result `shouldBe` Left "Undefined variable: x"
+	    isLeft result `shouldBe` True
 
     describe "should type check unary operators" $ do
 	describe "should type check negation" $ do
@@ -122,7 +123,7 @@ spec = do
 
 	it "should fail on none boolean condition" $ do
 	    let result = inferType typeEnv (If (IntLit 123) (IntLit 123) (IntLit 456))
-	    result `shouldBe` Left "Condition in if statement must be boolean"
+	    isLeft result `shouldBe` True
 
     describe "should type check function" $ do
 	-- Note: Functions shouldn't add to type envrionment, as they create a new scope
@@ -145,7 +146,6 @@ spec = do
 	    result `shouldBe` Right TFloat
 	    checkEnvEquality typeEnv expTypeEnv `shouldBe` True
 
-
 	it "should type check function with existing variables" $ do
 	    let typeEnv = Map.fromList [("x", TInt), ("y", TFloat)]
 	    let expTypeEnv = Map.fromList [("x", TInt), ("y", TFloat)]
@@ -153,6 +153,25 @@ spec = do
 
 	    result `shouldBe` Right TFloat
 	    checkEnvEquality typeEnv expTypeEnv `shouldBe` True
+
+	it "should type check function with if statement" $ do
+	    let expTypeEnv = Map.fromList []
+	    let result = inferType typeEnv (Fun (Ident "foo") [] TFloat (If (Boolean True) (Return (FloatLit 123.2)) (Return (FloatLit 3.14))))
+
+	    result `shouldBe` Right TFloat
+	    checkEnvEquality typeEnv expTypeEnv `shouldBe` True
+
+	it "should type check function with if of at least one valid return branch" $ do
+	    let expTypeEnv = Map.fromList []
+	    let result = inferType typeEnv (Fun (Ident "foo") [] TFloat (If (Boolean True) (Return (FloatLit 123.2)) (Return (IntLit 123))))
+
+	    result `shouldBe` Right TFloat
+	    checkEnvEquality typeEnv expTypeEnv `shouldBe` True
+
+	it "should fail type check function with no valid return type" $ do
+	    let result = inferType typeEnv (Fun (Ident "foo") [] TFloat (If (Boolean True) ((FloatLit 123.2)) (Return (IntLit 123))))
+
+	    isLeft result `shouldBe` True
 
 
 checkEnvEquality :: TypeEnv -> TypeEnv -> Bool

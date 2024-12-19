@@ -3,6 +3,7 @@ module TypeChecker (
 ) where
 
 import AST
+import Debug.Trace
 
 import qualified Data.Map as Map
 
@@ -69,8 +70,6 @@ inferType env expr = case expr of
         -- Handles global access & variable shadowing (as new replaces old)
         let env' = foldr(\(Ident arg, t) acc -> Map.insert arg t acc) env args
 
-        -- trace ("Function " ++ name ++ " with args " ++ show args ++ " and return type " ++ show retType)
-
         -- Check if the body type matches the return type
         checkReturnType env' retType body
 
@@ -108,11 +107,21 @@ checkReturnType env expectedType body = case body of
         else
             Left "Return type does not match function return type"
 
-    -- TODO: check if branhces
+    -- TODO: currently the type checker fails if at least one branch doesn't return, this shouldn't be the case
     -- Check every branch
-    -- If cond thenBranch elseBranch -> do
-    --     tthen <- checkReturnType env expectedType thenBranch
-    --     telse <- checkReturnType env expectedType elseBranch
+    If cond thenBranch elseBranch -> do
+        trace (show thenBranch ++ " " ++ show elseBranch) $ do
+            let tthen = checkReturnType env expectedType thenBranch
+            let telse = checkReturnType env expectedType elseBranch
+
+            case (tthen, telse) of
+                (Right t1, _)
+                    | t1 == expectedType -> Right expectedType
+
+                (_, Right t2)
+                    | t2 == expectedType -> Right expectedType
+
+                _ -> Left ("Neither branch returned the correct type!" ++ "Then branch: " ++ show tthen ++ " Else branch: " ++ show telse)
 
     -- No return implicilty returns null
     _ -> Right TNull
